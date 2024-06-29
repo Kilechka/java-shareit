@@ -1,17 +1,16 @@
 package ru.yandex.practicum.user;
 
-import ru.yandex.practicum.user.dto.UserDto;
+import ru.yandex.practicum.user.dto.UserUpdateDto;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface UserStorage {
 
-    public UserDto createUser(User user);
+    public User createUser(User user);
 
-    public Collection<UserDto> getAllUsers();
+    public Collection<User> getAllUsers();
 
-    public UserDto updateUser(Long userId, Map<String, Object> updates);
+    public User updateUser(Long userId, UserUpdateDto userDto);
 
     public void deleteUserById(Long id);
 

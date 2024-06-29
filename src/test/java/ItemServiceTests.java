@@ -5,13 +5,12 @@ import ru.yandex.practicum.ShareItApplication;
 import ru.yandex.practicum.item.ItemService;
 import ru.yandex.practicum.item.ItemStorageInMemory;
 import ru.yandex.practicum.item.dto.ItemDto;
+import ru.yandex.practicum.item.dto.ItemUpdateDto;
 import ru.yandex.practicum.user.UserService;
 import ru.yandex.practicum.user.UserStorageInMemory;
 import ru.yandex.practicum.user.dto.UserDto;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +19,12 @@ public class ItemServiceTests {
 
     private static UserStorageInMemory userStorageInMemory = new UserStorageInMemory();
     private static UserService userService = new UserService(userStorageInMemory);
-    private static ItemStorageInMemory itemStorageInMemory = new ItemStorageInMemory(userStorageInMemory);
-    private static ItemService itemService = new ItemService(itemStorageInMemory);
+    private static ItemStorageInMemory itemStorageInMemory = new ItemStorageInMemory();
+    private static ItemService itemService = new ItemService(itemStorageInMemory, userStorageInMemory);
     private static UserDto userDto;
-    private static Map<String, Object> updates;
     private static ItemDto createdItem;
     private static UserDto user;
+    private static ItemUpdateDto itemUpdateDto;
 
     @BeforeAll
     static void setUp() {
@@ -44,9 +43,8 @@ public class ItemServiceTests {
 
         createdItem = itemService.createItem(itemDto, user.getId());
 
-
-        updates = new HashMap<>();
-        updates.put("name", "Updated Item 1");
+        itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setName("Updated Item 1");
     }
 
     @Test
@@ -78,8 +76,8 @@ public class ItemServiceTests {
 
     @Test
     void testUpdateItem() {
-        ItemDto updatedItem = itemService.updateItem(updates, createdItem.getId(), user.getId());
-        assertEquals(updates.get("name"), updatedItem.getName());
+        ItemDto updatedItem = itemService.updateItem(itemUpdateDto, createdItem.getId(), user.getId());
+        assertEquals(itemUpdateDto.getName(), updatedItem.getName());
     }
 
     @Test

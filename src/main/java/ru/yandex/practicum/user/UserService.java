@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.user.dto.UserDto;
+import ru.yandex.practicum.user.dto.UserUpdateDto;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.user.dto.UserMapper.toUser;
 import static ru.yandex.practicum.user.dto.UserMapper.toUserDto;
@@ -21,17 +22,20 @@ public class UserService {
     public UserDto createUser(UserDto userDto) {
         log.info("В сервисе создаем пользователя");
         User user = toUser(userDto);
-        return userStorage.createUser(user);
+        return toUserDto(userStorage.createUser(user));
     }
 
     public Collection<UserDto> getAllUsers() {
         log.info("В сервисе получаем пользователей");
-        return userStorage.getAllUsers();
+        Collection<UserDto> usersDto = userStorage.getAllUsers().stream()
+                .map(user -> toUserDto((User) user))
+                .collect(Collectors.toList());
+        return usersDto;
     }
 
-    public UserDto updateUser(Long userId, Map<String, Object> updates) {
+    public UserDto updateUser(Long userId, UserUpdateDto userDto) {
         log.info("В сервисе обновляем пользователя");
-        return userStorage.updateUser(userId, updates);
+        return toUserDto(userStorage.updateUser(userId, userDto));
     }
 
     public void deleteUserById(Long id) {

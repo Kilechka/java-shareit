@@ -3,15 +3,9 @@ package ru.yandex.practicum.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.exceptions.NotFoundException;
-import ru.yandex.practicum.user.dto.UserDto;
+import ru.yandex.practicum.user.dto.UserUpdateDto;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static ru.yandex.practicum.user.dto.UserMapper.toUserDto;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -20,7 +14,7 @@ public class UserStorageInMemory implements UserStorage {
     HashMap<Long, User> users = new HashMap<>();
     Long id = 0L;
 
-    public UserDto createUser(User user) {
+    public User createUser(User user) {
         log.info("Создаем пользователя");
         isUserWithEmailExist(user.getId(), user.getEmail());
         id = makeId();
@@ -28,34 +22,31 @@ public class UserStorageInMemory implements UserStorage {
         users.put(id, user);
         log.info("Создали" + user);
 
-        return toUserDto(user);
+        return user;
     }
 
     @Override
-    public Collection<UserDto> getAllUsers() {
+    public Collection<User> getAllUsers() {
         log.info("Получаем пользователей");
-        Collection<UserDto> usersDto = users.values().stream()
-                .map(user -> toUserDto((User) user))
-                .collect(Collectors.toList());
-        return usersDto;
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public UserDto updateUser(Long userId, Map<String, Object> updates) {
+    public User updateUser(Long userId, UserUpdateDto userDto) {
         log.info("Обновляем пользователя");
         isUserExist(userId);
         User oldUser = users.get(userId);
-        if (updates.containsKey("name")) {
-            oldUser.setName((String) updates.get("name"));
+        if (userDto.getName() != null) {
+            oldUser.setName(userDto.getName());
             log.info("Присвоили поле name");
         }
-        if (updates.containsKey("email")) {
-            String newEmail = (String) updates.get("email");
+        if (userDto.getEmail() != null) {
+            String newEmail = userDto.getEmail();
             isUserWithEmailExist(userId, newEmail);
             oldUser.setEmail(newEmail);
             log.info("Присвоили поле email");
         }
-        return toUserDto(oldUser);
+        return oldUser;
     }
 
     @Override

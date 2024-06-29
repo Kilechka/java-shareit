@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.user.dto.UserDto;
+import ru.yandex.practicum.user.dto.UserUpdateDto;
 
 import java.util.Collection;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -26,28 +26,24 @@ public class UserController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Collection<UserDto> getAllUsers() {
         log.info("Получен запрос на получение пользователей");
         return userService.getAllUsers();
     }
 
     @PatchMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@PathVariable (value = "userId") Long userId, @Valid @RequestBody Map<String, Object> updates) {
+    public UserDto updateUser(@PathVariable (value = "userId") Long userId, @Valid @RequestBody UserUpdateDto userDto) {
         log.info("Получен запрос на обновление пользователя");
-        return userService.updateUser(userId, updates);
+        return userService.updateUser(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteUserById(@PathVariable (value = "userId") Long userId) {
         log.info("Получен запрос на удаление пользователя");
         userService.deleteUserById(userId);
     }
 
     @GetMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public UserDto getUser(@PathVariable (value = "userId") Long userId) {
         log.info("Получен запрос на получение пользователя");
         return userService.getUser(userId);

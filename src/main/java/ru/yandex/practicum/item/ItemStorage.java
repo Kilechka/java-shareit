@@ -1,19 +1,18 @@
 package ru.yandex.practicum.item;
 
-import ru.yandex.practicum.item.dto.ItemDto;
+import ru.yandex.practicum.user.User;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface ItemStorage {
 
-    public ItemDto createItem(ItemDto itemDto, Long userId);
+    public Item createItem(Item item, User user);
 
-    public ItemDto updateItem(Map<String, Object> updates, Long itemId, Long userId);
+    public Item updateItem(Item oldItem);
 
-    public ItemDto getItem(Long itemId);
+    public Item getItem(Long itemId);
 
-    public Collection<ItemDto> getAllUsersItems(Long userId);
+    public Collection<Item> getAllUsersItems(User user);
 
-    public Collection<ItemDto> findItemForBooking(String text);
+    public Collection<Item> findItemForBooking(String text);
 }

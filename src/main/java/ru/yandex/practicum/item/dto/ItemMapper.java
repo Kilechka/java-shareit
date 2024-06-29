@@ -2,7 +2,11 @@ package ru.yandex.practicum.item.dto;
 
 import ru.yandex.practicum.item.Item;
 import ru.yandex.practicum.user.User;
-public class ItemMapper {
+
+public final class ItemMapper {
+    private ItemMapper() {
+    }
+
     public static ItemDto toItemDto(Item item) {
         ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())

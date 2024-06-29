@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.item.dto.ItemDto;
+import ru.yandex.practicum.item.dto.ItemUpdateDto;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/items")
@@ -23,26 +24,25 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@Valid @RequestBody Map<String, Object> updates, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.updateItem(updates, itemId, userId);
+    public ItemDto updateItem(@Valid @RequestBody ItemUpdateDto itemDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
     public ItemDto getItem(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getItem(itemId);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Collection<ItemDto> getAllUsersItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAllUsersItems(userId);
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public Collection<ItemDto> findItemForBooking(@RequestParam("text") String text) {
+        if (text == null || text.isEmpty()) {
+            return new ArrayList<>();
+        }
         return itemService.findItemForBooking(text);
     }
 }

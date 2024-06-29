@@ -6,10 +6,9 @@ import ru.yandex.practicum.ShareItApplication;
 import ru.yandex.practicum.user.UserService;
 import ru.yandex.practicum.user.UserStorageInMemory;
 import ru.yandex.practicum.user.dto.UserDto;
+import ru.yandex.practicum.user.dto.UserUpdateDto;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,8 +18,8 @@ public class UserServiceTests {
     private static UserStorageInMemory userStorageInMemory = new UserStorageInMemory();
     private static UserService userService = new UserService(userStorageInMemory);
     private static UserDto userDto;
-    private static Map<String, Object> updates;
     static UserDto createdUser;
+    private static UserUpdateDto userUpdateDto;
 
     @BeforeAll
     static void setUp() {
@@ -31,8 +30,8 @@ public class UserServiceTests {
 
         createdUser = userService.createUser(userDto);
 
-        updates = new HashMap<>();
-        updates.put("name", "Jane Doe");
+        userUpdateDto = new UserUpdateDto();
+        userUpdateDto.setName("Jane Doe");
     }
 
     @Test
@@ -60,10 +59,11 @@ public class UserServiceTests {
         assertNotNull(users);
         assertTrue(users.contains(createdUser));
     }
+
     @Test
     void testUpdateUser() {
-        UserDto updatedUser = userService.updateUser(createdUser.getId(), updates);
-        Assertions.assertEquals(updates.get("name"), updatedUser.getName());
+        UserDto updatedUser = userService.updateUser(createdUser.getId(), userUpdateDto);
+        Assertions.assertEquals(userUpdateDto.getName(), updatedUser.getName());
     }
 
     @Test

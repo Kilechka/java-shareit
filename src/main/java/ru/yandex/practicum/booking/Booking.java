@@ -14,11 +14,4 @@ public class Booking {
     private Item item;
     private User booker;
     boolean status;
-
-    public enum Status {
-        WAITING,
-        APPROVED,
-        REJECTED,
-        CANCELED
-    }
 }
