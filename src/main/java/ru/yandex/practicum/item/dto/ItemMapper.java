@@ -4,6 +4,7 @@ import ru.yandex.practicum.item.Item;
 import ru.yandex.practicum.user.User;
 
 public final class ItemMapper {
+
     private ItemMapper() {
     }
 

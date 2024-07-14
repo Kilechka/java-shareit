@@ -1,18 +1,28 @@
 package ru.yandex.practicum.item;
 
+import ru.yandex.practicum.booking.Booking;
 import ru.yandex.practicum.user.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ItemStorage {
 
-    public Item createItem(Item item, User user);
+    Item createItem(Item item, User user);
 
-    public Item updateItem(Item oldItem);
+    Item updateItem(Item oldItem);
 
-    public Item getItem(Long itemId);
+    Item getItem(Long itemId);
 
-    public Collection<Item> getAllUsersItems(User user);
+    Collection<Item> getAllUsersItems(User user);
 
-    public Collection<Item> findItemForBooking(String text);
+    Collection<Item> findItemForBooking(String text);
+
+    Item findByIdAndOwner(Long itemId, User user);
+
+    Comment addComment(Comment comment);
+
+    Collection<Comment> getCommentsByItemId(Long itemId);
+
+    Optional<Booking> wasInOwn(Long userId, Long itemId);
 }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.user.dto.UserDto;
 import ru.yandex.practicum.user.dto.UserUpdateDto;
 
@@ -15,6 +16,7 @@ import static ru.yandex.practicum.user.dto.UserMapper.toUserDto;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserStorage userStorage;
@@ -25,6 +27,7 @@ public class UserService {
         return toUserDto(userStorage.createUser(user));
     }
 
+    @Transactional(readOnly = true)
     public Collection<UserDto> getAllUsers() {
         log.info("В сервисе получаем пользователей");
         Collection<UserDto> usersDto = userStorage.getAllUsers().stream()
@@ -43,6 +46,7 @@ public class UserService {
         userStorage.deleteUserById(id);
     }
 
+    @Transactional(readOnly = true)
     public UserDto getUser(Long userId) {
         log.info("В сервисе получаем пользователя");
         UserDto user = toUserDto(userStorage.getUser(userId));

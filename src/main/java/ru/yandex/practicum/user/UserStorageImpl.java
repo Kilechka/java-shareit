@@ -1,5 +1,7 @@
 package ru.yandex.practicum.user;
 
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.exceptions.NotFoundException;
@@ -9,40 +11,44 @@ import java.util.*;
 
 @Repository
 @Slf4j
-public class UserStorageInMemory implements UserStorage {
+@RequiredArgsConstructor
+@Transactional
+public class UserStorageImpl implements UserStorage {
 
-    HashMap<Long, User> users = new HashMap<>();
-    Long id = 0L;
+    private final UserRepository userRepository;
 
+    @Transactional
     public User createUser(User user) {
         log.info("Создаем пользователя");
-        isUserWithEmailExist(user.getId(), user.getEmail());
-        id = makeId();
-        user.setId(id);
-        users.put(id, user);
-        log.info("Создали" + user);
 
-        return user;
+        User newUser = userRepository.save(user);
+        log.info("Создали" + newUser);
+
+        return newUser;
     }
 
     @Override
+    @Transactional
     public Collection<User> getAllUsers() {
         log.info("Получаем пользователей");
-        return new ArrayList<>(users.values());
+        List<User> allUsers = userRepository.findAll();
+        return allUsers;
     }
 
     @Override
+    @Transactional
     public User updateUser(Long userId, UserUpdateDto userDto) {
         log.info("Обновляем пользователя");
         isUserExist(userId);
-        User oldUser = users.get(userId);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User oldUser = optionalUser.get();
         if (userDto.getName() != null) {
             oldUser.setName(userDto.getName());
             log.info("Присвоили поле name");
         }
         if (userDto.getEmail() != null) {
             String newEmail = userDto.getEmail();
-            isUserWithEmailExist(userId, newEmail);
+          //  isUserWithEmailExist(userId, newEmail);
             oldUser.setEmail(newEmail);
             log.info("Присвоили поле email");
         }
@@ -50,37 +56,27 @@ public class UserStorageInMemory implements UserStorage {
     }
 
     @Override
+    @Transactional
     public void deleteUserById(Long id) {
         log.info("Удаляем пользователя");
         isUserExist(id);
-        users.remove(id);
+        userRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional
     public User getUser(Long userId) {
         log.info("Получаем пользователя");
         isUserExist(userId);
-        return users.get(userId);
+        Optional<User> user = userRepository.findById(userId);
+        return user.get();
     }
 
-    private Long makeId() {
-        log.info("Создаем айди");
-        return ++id;
-    }
-
+    @Transactional
     private void isUserExist(Long userId) {
-        if (!users.containsKey(userId)) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.warn("Пользователь с данным id не найден");
             throw new NotFoundException("Пользователь с данным id не найден");
-        }
-    }
-
-    private void isUserWithEmailExist(Long userId, String email) {
-        Optional<User> userWithEmail = users.values().stream()
-                .filter(u -> u.getId() != userId && u.getEmail().equals(email))
-                .findFirst();
-        if (userWithEmail.isPresent()) {
-            log.warn("Пользователь с таким email уже существует");
-            throw new RuntimeException("Пользователь с таким email уже существует");
         }
     }
 }
