@@ -17,7 +17,7 @@ import ru.yandex.practicum.user.UserService;
 import ru.yandex.practicum.user.dto.UserDto;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +31,6 @@ public class BookingServiceTests {
     private final ItemServiceImpl itemService;
     private final BookingServiceImpl bookingService;
     private UserDto user;
-
     private UserDto user1;
     private ItemDto item;
     private BookingDto booking;
@@ -98,20 +97,20 @@ public class BookingServiceTests {
 
     @Test
     void shouldGetBookingsOfUserTest() {
-        Collection<BookingDto> bookings = bookingService.getBookingsOfUser("ALL", user1.getId());
+        List<BookingDto> bookings = (List<BookingDto>) bookingService.getBookingsOfUser("ALL", user1.getId());
         BookingDto retrievedBooking = bookingService.getBookingById(booking.getId(), user1.getId());
 
         assertNotNull(bookings);
-        assertTrue(bookings.contains(retrievedBooking));
+        assertEquals(bookings.get(0).getId(), retrievedBooking.getId());
     }
 
     @Test
     void shouldGetBookingForOwnerTest() {
-        Collection<BookingDto> bookings = bookingService.getBookingForOwner(user.getId(), "ALL", 0, 10);
+        List<BookingDto> bookings = (List<BookingDto>) bookingService.getBookingForOwner(user.getId(), "ALL", 0, 10);
         BookingDto retrievedBooking = bookingService.getBookingById(booking.getId(), user.getId());
 
         assertNotNull(bookings);
-        assertTrue(bookings.contains(retrievedBooking));
+        assertEquals(bookings.get(0).getId(), retrievedBooking.getId());
     }
 
     @Test

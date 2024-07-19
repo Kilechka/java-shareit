@@ -3,6 +3,7 @@ package ru.yandex.practicum.booking.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.booking.Status;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.user.User;
