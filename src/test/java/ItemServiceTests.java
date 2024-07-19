@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItApplication;
-import ru.yandex.practicum.item.ItemService;
+import ru.yandex.practicum.item.ItemServiceImpl;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.item.dto.ItemUpdateDto;
 import ru.yandex.practicum.user.UserService;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ItemServiceTests {
 
     private final UserService userService;
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
     private UserDto userDto;
     private ItemDto createdItem;
     private UserDto user;

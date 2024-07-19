@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -71,4 +72,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     //FUTURE
     Page<Booking> findByItemOwnerIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime time, Pageable pageable);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.id = :itemId AND " +
+            "((b.start < :newEnd AND b.end > :newStart) OR (b.start > :newStart AND b.start < :newEnd))")
+    List<Booking> findByItemIdAndStartOrEndBetween(Long itemId, LocalDateTime newStart, LocalDateTime newEnd);
+
+    List<Booking> findByItemIdAndStartBeforeAndEndAfter(Long itemId, LocalDateTime newEnd, LocalDateTime newStart);
 }

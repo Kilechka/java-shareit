@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EqualsAndHashCode
 @Table(name = "bookings", schema = "public")
 public class Booking {
     @Id
@@ -33,5 +32,5 @@ public class Booking {
     private User booker;
     @Enumerated(EnumType.ORDINAL)
     @JsonIgnore
-    Status status;
+    private Status status;
 }

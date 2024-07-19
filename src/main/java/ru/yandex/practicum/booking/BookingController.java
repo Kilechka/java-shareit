@@ -16,7 +16,7 @@ import java.util.Collection;
 @Slf4j
 public class BookingController {
 
-    private final BookingService bookingService;
+    private final BookingServiceImpl bookingService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

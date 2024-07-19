@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.exceptions.BookingException;
 import ru.yandex.practicum.item.dto.CommentInDto;
 import ru.yandex.practicum.item.dto.CommentOutDto;
 import ru.yandex.practicum.item.dto.ItemDto;
@@ -18,7 +17,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -52,10 +51,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentOutDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
                                     @PathVariable Long itemId,
-                                    @RequestBody CommentInDto comment) {
-        if (comment.getText().isBlank()) {
-            throw new BookingException("Отзыв не может быть пустым");
-        }
+                                    @RequestBody @Valid CommentInDto comment) {
         return itemService.addComment(userId, itemId, comment);
     }
 }

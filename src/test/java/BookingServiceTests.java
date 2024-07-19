@@ -6,11 +6,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItApplication;
-import ru.yandex.practicum.booking.BookingService;
+import ru.yandex.practicum.booking.BookingServiceImpl;
 import ru.yandex.practicum.booking.Status;
 import ru.yandex.practicum.booking.dto.BookingDto;
 import ru.yandex.practicum.booking.dto.BookingDtoIn;
-import ru.yandex.practicum.item.ItemService;
+import ru.yandex.practicum.exceptions.BookingException;
+import ru.yandex.practicum.item.ItemServiceImpl;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.user.UserService;
 import ru.yandex.practicum.user.dto.UserDto;
@@ -27,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BookingServiceTests {
 
     private final UserService userService;
-    private final ItemService itemService;
-    private final BookingService bookingService;
+    private final ItemServiceImpl itemService;
+    private final BookingServiceImpl bookingService;
     private UserDto user;
 
     private UserDto user1;
@@ -111,5 +112,49 @@ public class BookingServiceTests {
 
         assertNotNull(bookings);
         assertTrue(bookings.contains(retrievedBooking));
+    }
+
+    @Test
+    void shouldThrowExceptionForOverlappingBookingTest() {
+        BookingDtoIn overlappingBookingDto1 = BookingDtoIn.builder()
+                .start(booking.getStart().plusHours(1))
+                .end(booking.getEnd().minusHours(1))
+                .build();
+        overlappingBookingDto1.setItemId(item.getId());
+
+        BookingDtoIn overlappingBookingDto2 = BookingDtoIn.builder()
+                .start(booking.getStart().minusHours(1))
+                .end(booking.getEnd().plusHours(1))
+                .build();
+        overlappingBookingDto2.setItemId(item.getId());
+
+        BookingDtoIn overlappingBookingDto3 = BookingDtoIn.builder()
+                .start(booking.getStart().minusHours(1))
+                .end(booking.getEnd().minusHours(1))
+                .build();
+        overlappingBookingDto3.setItemId(item.getId());
+
+        BookingDtoIn overlappingBookingDto4 = BookingDtoIn.builder()
+                .start(booking.getStart().plusHours(1))
+                .end(booking.getEnd().plusHours(1))
+                .build();
+        overlappingBookingDto4.setItemId(item.getId());
+
+
+        assertThrows(BookingException.class, () -> {
+            bookingService.createBooking(overlappingBookingDto1, user1.getId());
+        });
+
+        assertThrows(BookingException.class, () -> {
+            bookingService.createBooking(overlappingBookingDto2, user1.getId());
+        });
+
+        assertThrows(BookingException.class, () -> {
+            bookingService.createBooking(overlappingBookingDto3, user1.getId());
+        });
+
+        assertThrows(BookingException.class, () -> {
+            bookingService.createBooking(overlappingBookingDto4, user1.getId());
+        });
     }
 }
