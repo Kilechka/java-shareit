@@ -15,9 +15,7 @@ import ru.yandex.practicum.user.User;
 import ru.yandex.practicum.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.item.dto.CommentMapper.toComment;
@@ -94,26 +92,47 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     public Collection<ItemDto> getAllUsersItems(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        List<ItemDto> items = itemRepository.findByOwnerId(userId).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        List<Item> items = (List<Item>) itemRepository.findByOwnerId(userId);
+        List<Long> itemIds = items.stream().map(Item::getId).collect(Collectors.toList());
+
+        List<Booking> bookings = bookingRepository.findByItemIdInAndStatusNot(itemIds, Status.REJECTED);
+        Map<Long, List<Booking>> bookingsByItemId = bookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+
+        List<Comment> comments = commentRepository.findByItemIdIn(itemIds);
+        Map<Long, List<Comment>> commentsByItemId = comments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
 
         return items.stream()
                 .map(item -> {
+                    ItemDto itemDto = toItemDto(item);
                     LocalDateTime now = LocalDateTime.now();
-                    Booking lastBooking = bookingRepository.findFirstBookingByItemIdAndStartIsBeforeAndStatusNotOrderByStartDesc(item.getId(), now, Status.REJECTED).orElse(null);
-                    Booking nextBooking = bookingRepository.findFirstBookingByItemIdAndStartIsAfterAndStatusNotOrderByStartAsc(item.getId(), now, Status.REJECTED).orElse(null);
-                    List<CommentOutDto> comments = commentRepository.findAllByItemId(item.getId()).stream()
-                            .map(CommentMapper::toCommentDto)
-                            .collect(Collectors.toList());
+
+                    List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
+                    Booking lastBooking = itemBookings.stream()
+                            .filter(booking -> booking.getStart().isBefore(now))
+                            .max(Comparator.comparing(Booking::getStart))
+                            .orElse(null);
+                    Booking nextBooking = itemBookings.stream()
+                            .filter(booking -> booking.getStart().isAfter(now))
+                            .min(Comparator.comparing(Booking::getStart))
+                            .orElse(null);
+
                     if (lastBooking != null) {
-                        item.setLastBooking(new BookingDtoOut(lastBooking.getId(), lastBooking.getBooker().getId()));
+                        itemDto.setLastBooking(new BookingDtoOut(lastBooking.getId(), lastBooking.getBooker().getId()));
                     }
                     if (nextBooking != null) {
-                        item.setNextBooking(new BookingDtoOut(nextBooking.getId(), nextBooking.getBooker().getId()));
+                        itemDto.setNextBooking(new BookingDtoOut(nextBooking.getId(), nextBooking.getBooker().getId()));
                     }
-                    if (!comments.isEmpty()) {
-                        item.setComments(comments);
+
+                    List<CommentOutDto> itemComments = commentsByItemId.getOrDefault(item.getId(), Collections.emptyList()).stream()
+                            .map(CommentMapper::toCommentDto)
+                            .collect(Collectors.toList());
+                    if (!itemComments.isEmpty()) {
+                        itemDto.setComments(itemComments);
                     }
-                    return item;
+
+                    return itemDto;
                 })
                 .collect(Collectors.toList());
     }
