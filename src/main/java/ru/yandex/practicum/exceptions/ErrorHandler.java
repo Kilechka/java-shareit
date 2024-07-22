@@ -11,18 +11,24 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerValidationException(final ValidationException e) {
-        return new ErrorResponse("Ошибка валидации данных");
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handlerNotFoundException(final NotFoundException e) {
-        return new ErrorResponse("Искомый объект не найден");
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handlerAnyException(final RuntimeException e) {
-        return new ErrorResponse("Внутренняя ошибка сервера");
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerBookingException(final BookingException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

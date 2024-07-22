@@ -1,51 +1,19 @@
 package ru.yandex.practicum.user;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.user.dto.UserDto;
 import ru.yandex.practicum.user.dto.UserUpdateDto;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.user.dto.UserMapper.toUser;
-import static ru.yandex.practicum.user.dto.UserMapper.toUserDto;
+public interface UserService  {
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class UserService {
+    UserDto createUser(UserDto userDto);
 
-    private final UserStorage userStorage;
+    Collection<UserDto> getAllUsers();
 
-    public UserDto createUser(UserDto userDto) {
-        log.info("В сервисе создаем пользователя");
-        User user = toUser(userDto);
-        return toUserDto(userStorage.createUser(user));
-    }
+    UserDto updateUser(Long userId, UserUpdateDto userDto);
 
-    public Collection<UserDto> getAllUsers() {
-        log.info("В сервисе получаем пользователей");
-        Collection<UserDto> usersDto = userStorage.getAllUsers().stream()
-                .map(user -> toUserDto((User) user))
-                .collect(Collectors.toList());
-        return usersDto;
-    }
+    void deleteUserById(Long id);
 
-    public UserDto updateUser(Long userId, UserUpdateDto userDto) {
-        log.info("В сервисе обновляем пользователя");
-        return toUserDto(userStorage.updateUser(userId, userDto));
-    }
-
-    public void deleteUserById(Long id) {
-        log.info("В сервисе удаляем пользователя");
-        userStorage.deleteUserById(id);
-    }
-
-    public UserDto getUser(Long userId) {
-        log.info("В сервисе получаем пользователя");
-        UserDto user = toUserDto(userStorage.getUser(userId));
-        return user;
-    }
+    UserDto getUser(Long userId);
 }

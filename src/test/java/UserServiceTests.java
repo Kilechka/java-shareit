@@ -1,10 +1,13 @@
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItApplication;
 import ru.yandex.practicum.user.UserService;
-import ru.yandex.practicum.user.UserStorageInMemory;
 import ru.yandex.practicum.user.dto.UserDto;
 import ru.yandex.practicum.user.dto.UserUpdateDto;
 
@@ -13,16 +16,18 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {ShareItApplication.class})
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:schema.sql")
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserServiceTests {
 
-    private static UserStorageInMemory userStorageInMemory = new UserStorageInMemory();
-    private static UserService userService = new UserService(userStorageInMemory);
-    private static UserDto userDto;
-    static UserDto createdUser;
-    private static UserUpdateDto userUpdateDto;
+    private final UserService userService;
+    private UserDto userDto;
+    private UserDto createdUser;
+    private UserUpdateDto userUpdateDto;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         userDto = UserDto.builder()
                 .name("John Doe")
                 .email("doe@example.com")
@@ -52,8 +57,6 @@ public class UserServiceTests {
 
     @Test
     void shouldGetUsersTest() {
-        UserDto userDto = new UserDto(1L, "John", "john@example.com");
-
         Collection<UserDto> users = userService.getAllUsers();
 
         assertNotNull(users);
@@ -69,7 +72,7 @@ public class UserServiceTests {
     @Test
     void testDeleteUserById() {
         userService.deleteUserById(createdUser.getId());
-        Assertions.assertEquals(1, userService.getAllUsers().size());
+        Assertions.assertEquals(0, userService.getAllUsers().size());
     }
 
     @Test

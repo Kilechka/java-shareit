@@ -1,17 +1,20 @@
 package ru.yandex.practicum.user;
 
-import lombok.Builder;
-import lombok.Data;
-import ru.yandex.practicum.item.Item;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.HashMap;
-
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "users", schema = "public")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
-    @Builder.Default
-    private HashMap<Long, Item> items = new HashMap<>();
 }

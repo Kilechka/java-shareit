@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.item.dto.CommentInDto;
+import ru.yandex.practicum.item.dto.CommentOutDto;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.item.dto.ItemUpdateDto;
 
@@ -15,7 +17,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,7 +32,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItem(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getItem(itemId);
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
@@ -44,5 +46,12 @@ public class ItemController {
             return new ArrayList<>();
         }
         return itemService.findItemForBooking(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentOutDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @PathVariable Long itemId,
+                                    @RequestBody @Valid CommentInDto comment) {
+        return itemService.addComment(userId, itemId, comment);
     }
 }
