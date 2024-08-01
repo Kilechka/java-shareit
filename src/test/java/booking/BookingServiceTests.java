@@ -1,3 +1,5 @@
+package booking;
+
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItApplication;
-import ru.yandex.practicum.booking.BookingServiceImpl;
+import ru.yandex.practicum.booking.BookingController;
 import ru.yandex.practicum.booking.Status;
 import ru.yandex.practicum.booking.dto.BookingDto;
 import ru.yandex.practicum.booking.dto.BookingDtoIn;
@@ -29,7 +31,7 @@ public class BookingServiceTests {
 
     private final UserService userService;
     private final ItemServiceImpl itemService;
-    private final BookingServiceImpl bookingService;
+    private final BookingController bookingController;
     private UserDto user;
     private UserDto user1;
     private ItemDto item;
@@ -66,7 +68,7 @@ public class BookingServiceTests {
                 .build();
         bookingDto.setItemId(item.getId());
 
-        booking = bookingService.createBooking(bookingDto, user1.getId());
+        booking = bookingController.createBooking(bookingDto, user1.getId());
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BookingServiceTests {
 
         newBookingDto.setItemId(item.getId());
 
-        BookingDto newCreatedBooking = bookingService.createBooking(newBookingDto, user1.getId());
+        BookingDto newCreatedBooking = bookingController.createBooking(newBookingDto, user1.getId());
 
         assertNotNull(booking.getId());
         assertEquals(user1.getId(), booking.getBooker().getId());
@@ -90,15 +92,15 @@ public class BookingServiceTests {
 
     @Test
     void shouldConfirmBookingTest() {
-        bookingService.confirmBooking(user.getId(), booking.getId(), true);
-        BookingDto confirmedBooking = bookingService.getBookingById(booking.getId(), user.getId());
+        bookingController.confirmBooking(user.getId(), booking.getId(), true);
+        BookingDto confirmedBooking = bookingController.getBookingById(booking.getId(), user.getId());
         assertEquals(Status.APPROVED, confirmedBooking.getStatus());
     }
 
     @Test
     void shouldGetBookingsOfUserTest() {
-        List<BookingDto> bookings = (List<BookingDto>) bookingService.getBookingsOfUser("ALL", user1.getId());
-        BookingDto retrievedBooking = bookingService.getBookingById(booking.getId(), user1.getId());
+        List<BookingDto> bookings = (List<BookingDto>) bookingController.getBookingsOfUser("ALL", user1.getId());
+        BookingDto retrievedBooking = bookingController.getBookingById(booking.getId(), user1.getId());
 
         assertNotNull(bookings);
         assertEquals(bookings.get(0).getId(), retrievedBooking.getId());
@@ -106,8 +108,8 @@ public class BookingServiceTests {
 
     @Test
     void shouldGetBookingForOwnerTest() {
-        List<BookingDto> bookings = (List<BookingDto>) bookingService.getBookingForOwner(user.getId(), "ALL", 0, 10);
-        BookingDto retrievedBooking = bookingService.getBookingById(booking.getId(), user.getId());
+        List<BookingDto> bookings = (List<BookingDto>) bookingController.getBookingForOwner(user.getId(), "ALL", 0, 10);
+        BookingDto retrievedBooking = bookingController.getBookingById(booking.getId(), user.getId());
 
         assertNotNull(bookings);
         assertEquals(bookings.get(0).getId(), retrievedBooking.getId());
@@ -141,19 +143,19 @@ public class BookingServiceTests {
 
 
         assertThrows(BookingException.class, () -> {
-            bookingService.createBooking(overlappingBookingDto1, user1.getId());
+            bookingController.createBooking(overlappingBookingDto1, user1.getId());
         });
 
         assertThrows(BookingException.class, () -> {
-            bookingService.createBooking(overlappingBookingDto2, user1.getId());
+            bookingController.createBooking(overlappingBookingDto2, user1.getId());
         });
 
         assertThrows(BookingException.class, () -> {
-            bookingService.createBooking(overlappingBookingDto3, user1.getId());
+            bookingController.createBooking(overlappingBookingDto3, user1.getId());
         });
 
         assertThrows(BookingException.class, () -> {
-            bookingService.createBooking(overlappingBookingDto4, user1.getId());
+            bookingController.createBooking(overlappingBookingDto4, user1.getId());
         });
     }
 }

@@ -1,3 +1,5 @@
+package item;
+
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItApplication;
-import ru.yandex.practicum.item.ItemServiceImpl;
+import ru.yandex.practicum.item.ItemController;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.item.dto.ItemUpdateDto;
 import ru.yandex.practicum.user.UserService;
@@ -20,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:schema.sql")
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItemServiceTests {
+public class ItemControllerTests {
 
     private final UserService userService;
-    private final ItemServiceImpl itemService;
+    private final ItemController itemController;
     private UserDto userDto;
     private ItemDto createdItem;
     private UserDto user;
@@ -44,7 +46,7 @@ public class ItemServiceTests {
                 .available(true)
                 .build();
 
-        createdItem = itemService.createItem(itemDto, user.getId());
+        createdItem = itemController.createItem(itemDto, user.getId());
 
         itemUpdateDto = new ItemUpdateDto();
         itemUpdateDto.setName("Updated Item 1");
@@ -58,7 +60,7 @@ public class ItemServiceTests {
                 .available(false)
                 .build();
 
-        ItemDto newCreatedItem = itemService.createItem(newItemDto, user.getId());
+        ItemDto newCreatedItem = itemController.createItem(newItemDto, user.getId());
 
         assertNotNull(createdItem.getId());
         assertEquals(userDto.getId(), createdItem.getOwner());
@@ -70,7 +72,7 @@ public class ItemServiceTests {
 
     @Test
     void shouldGetItemsTest() {
-        Collection<ItemDto> items = itemService.getAllUsersItems(user.getId());
+        Collection<ItemDto> items = itemController.getAllUsersItems(user.getId());
 
         assertNotNull(items);
         assertTrue(items.contains(createdItem));
@@ -78,13 +80,13 @@ public class ItemServiceTests {
 
     @Test
     void testUpdateItem() {
-        ItemDto updatedItem = itemService.updateItem(itemUpdateDto, createdItem.getId(), user.getId());
+        ItemDto updatedItem = itemController.updateItem(itemUpdateDto, createdItem.getId(), user.getId());
         assertEquals(itemUpdateDto.getName(), updatedItem.getName());
     }
 
     @Test
     void testGetItem() {
-        ItemDto retrievedItem = itemService.getItem(createdItem.getId(), user.getId());
+        ItemDto retrievedItem = itemController.getItem(createdItem.getId(), user.getId());
         assertEquals(createdItem.getId(), retrievedItem.getId());
         assertEquals(createdItem.getOwner(), retrievedItem.getOwner());
         assertEquals(createdItem.getDescription(), retrievedItem.getDescription());
@@ -93,7 +95,7 @@ public class ItemServiceTests {
 
     @Test
     void testFindItemForBooking() {
-        Collection<ItemDto> foundItems = itemService.findItemForBooking("Item 1");
+        Collection<ItemDto> foundItems = itemController.findItemForBooking("Item 1");
         assertEquals(1, foundItems.size());
         assertEquals(createdItem.getId(), foundItems.iterator().next().getId());
     }
