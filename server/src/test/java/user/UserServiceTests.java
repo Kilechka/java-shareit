@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItServer;
 import ru.yandex.practicum.exceptions.NotFoundException;
-import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.user.UserServiceImpl;
 import ru.yandex.practicum.user.dto.UserDto;
 import ru.yandex.practicum.user.dto.UserUpdateDto;
