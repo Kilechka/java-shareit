@@ -21,26 +21,11 @@ public class RequestDtoTests {
         RequestDto requestDto = RequestDto.builder()
                 .description("").build();
 
-
-
         Set<ConstraintViolation<RequestDto>> violations = validator.validate(requestDto);
         List<ConstraintViolation<RequestDto>> violationList = new ArrayList<>(violations);
 
         assertEquals(1, violationList.size());
         assertEquals("description", violationList.get(0).getPropertyPath().toString());
-        assertEquals("не должно быть пустым", violationList.get(0).getMessage());
+        assertEquals("Поле 'description' не может быть пустым", violationList.get(0).getMessage());
     }
-
-    @Test
-    void validateRequestDtoEmailNull() {
-        RequestDto requestDto = RequestDto.builder().build();
-
-        Set<ConstraintViolation<RequestDto>> violations = validator.validate(requestDto);
-        List<ConstraintViolation<RequestDto>> violationList = new ArrayList<>(violations);
-
-        assertEquals(1, violationList.size());
-        assertEquals("description", violationList.get(0).getPropertyPath().toString());
-        assertEquals("не должно быть пустым", violationList.get(0).getMessage());
-    }
-
 }

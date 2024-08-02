@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class CommentInDto {
-    @NotBlank
+    @NotBlank(message = "Поле 'text' не может быть пустым")
     private String text;
 }

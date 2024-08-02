@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class RequestDto {
-    @NotBlank
+    @NotBlank(message = "Поле 'description' не может быть пустым")
     private String description;
 }
