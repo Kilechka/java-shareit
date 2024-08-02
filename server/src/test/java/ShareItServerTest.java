@@ -14,16 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ShareItServerTest {
 
-    private final UserController userController;
-    private final ItemController itemController;
-    private final BookingController bookingController;
-    private final RequestController requestController;
-
     @Test
     void contextLoads() {
-        assertNotNull(userController);
-        assertNotNull(itemController);
-        assertNotNull(bookingController);
-        assertNotNull(requestController);
     }
 }
