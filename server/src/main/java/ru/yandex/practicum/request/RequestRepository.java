@@ -8,5 +8,6 @@ import java.util.List;
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByRequestorIdOrderByCreatedDesc(Long userId);
+
     List<Request> findAllByOrderByCreatedDesc(Pageable pageable);
 }

@@ -8,17 +8,14 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItServer;
-import ru.yandex.practicum.booking.BookingController;
 import ru.yandex.practicum.booking.BookingServiceImpl;
 import ru.yandex.practicum.booking.Status;
 import ru.yandex.practicum.booking.dto.BookingDto;
 import ru.yandex.practicum.booking.dto.BookingDtoIn;
 import ru.yandex.practicum.exceptions.BookingException;
 import ru.yandex.practicum.item.ItemController;
-import ru.yandex.practicum.item.ItemServiceImpl;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.user.UserController;
-import ru.yandex.practicum.user.UserService;
 import ru.yandex.practicum.user.dto.UserDto;
 
 import java.time.LocalDateTime;

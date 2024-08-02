@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItServer;
-import ru.yandex.practicum.item.ItemController;
 import ru.yandex.practicum.item.ItemServiceImpl;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.item.dto.ItemUpdateDto;

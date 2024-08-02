@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItServer;
-import ru.yandex.practicum.request.RequestController;
 import ru.yandex.practicum.request.RequestServiceImpl;
 import ru.yandex.practicum.request.dto.RequestDto;
 import ru.yandex.practicum.request.dto.RequestDtoOut;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RequestServiceTests {
 
     private final UserService userService;
-    private final RequestServiceImpl RequestService;
+    private final RequestServiceImpl requestService;
     private UserDto user;
     private RequestDto request;
 
@@ -43,7 +42,7 @@ public class RequestServiceTests {
                 .description("Test request description")
                 .build();
 
-        request = RequestService.createRequest(user.getId(), requestDto);
+        request = requestService.createRequest(user.getId(), requestDto);
     }
 
     @Test
@@ -52,7 +51,7 @@ public class RequestServiceTests {
                 .description("New test request description")
                 .build();
 
-        RequestDto newCreatedRequest = RequestService.createRequest(user.getId(), newRequestDto);
+        RequestDto newCreatedRequest = requestService.createRequest(user.getId(), newRequestDto);
 
         assertNotNull(newCreatedRequest.getId());
         assertEquals(newRequestDto.getDescription(), newCreatedRequest.getDescription());
@@ -61,7 +60,7 @@ public class RequestServiceTests {
 
     @Test
     void shouldGetUserRequestsTest() {
-        Collection<RequestDtoOut> userRequests = RequestService.getUserRequests(user.getId());
+        Collection<RequestDtoOut> userRequests = requestService.getUserRequests(user.getId());
 
         assertNotNull(userRequests);
         assertFalse(userRequests.isEmpty());
@@ -70,7 +69,7 @@ public class RequestServiceTests {
 
     @Test
     void shouldGetAllRequestsTest() {
-        Collection<RequestDto> allRequests = RequestService.getRequests(user.getId(), 0, 10);
+        Collection<RequestDto> allRequests = requestService.getRequests(user.getId(), 0, 10);
 
         assertNotNull(allRequests);
         assertFalse(allRequests.isEmpty());
@@ -79,7 +78,7 @@ public class RequestServiceTests {
 
     @Test
     void shouldGetRequestByIdTest() {
-        RequestDtoOut retrievedRequest = RequestService.getRequest(user.getId(), request.getId());
+        RequestDtoOut retrievedRequest = requestService.getRequest(user.getId(), request.getId());
 
         assertNotNull(retrievedRequest);
         assertEquals(request.getId(), retrievedRequest.getId());
