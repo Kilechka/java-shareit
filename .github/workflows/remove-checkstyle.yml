@@ -1,0 +1,22 @@
+name: Remove checkstyle.xml
+
+on:
+  push:
+    branches:
+      - add-item-requests-and-gateway
+
+jobs:
+  remove-checkstyle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Remove checkstyle.xml
+        run: |
+          git rm checkstyle.xml
+          git commit -m "Remove checkstyle.xml from PR"
+          git push origin add-item-requests-and-gateway
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
