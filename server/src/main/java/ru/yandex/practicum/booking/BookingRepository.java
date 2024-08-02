@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,35 +27,35 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "JOIN items as i on i.id = b.item_id " +
             "WHERE b.booker_id = ?1 AND b.status = ?2 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
-    Collection<Booking> findBookingsByUserAndStatus(Long userId, Status state);
+    Page<Booking> findBookingsByUserAndStatus(Long userId, Status state, Pageable pageable);
 
     //ALL
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i on i.id = b.item_id " +
             "WHERE b.booker_id = ?1 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
-    Collection<Booking> findAllBookingsByUser(Long userId);
+    Page<Booking> findAllBookingsByUser(Long userId, Pageable pageable);
 
     //CURRENT
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i on i.id = b.item_id " +
             "WHERE b.booker_id = ?1 AND ?2 BETWEEN b.start_date AND b.end_date " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
-    Collection<Booking> findCurrentBookingsByUser(Long userId, LocalDateTime time);
+    Page<Booking> findCurrentBookingsByUser(Long userId, LocalDateTime time, Pageable pageable);
 
     //PAST
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i on i.id = b.item_id " +
             "WHERE b.booker_id = ?1 AND b.end_date < ?2 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
-    Collection<Booking> findPastBookingsByUser(Long userId, LocalDateTime time);
+    Page<Booking> findPastBookingsByUser(Long userId, LocalDateTime time, Pageable pageable);
 
     //FUTURE
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i on i.id = b.item_id " +
             "WHERE b.booker_id = ?1 AND b.start_date > ?2 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
-    Collection<Booking> findFutureBookingsByUser(Long userId, LocalDateTime time);
+    Page<Booking> findFutureBookingsByUser(Long userId, LocalDateTime time, Pageable pageable);
 
     //WAITING, REJECTED
     Page<Booking> findByItemOwnerIdAndStatusOrderByStartDesc(Long ownerId, Status status, Pageable pageable);

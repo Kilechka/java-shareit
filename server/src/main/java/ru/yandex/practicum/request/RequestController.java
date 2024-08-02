@@ -18,7 +18,6 @@ public class RequestController {
     private final RequestService requestService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public RequestDto createRequest(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody RequestDto itemRequestDto) {
         log.info("Получен запрос на создание запроса для пользователя с ID {}", userId);
         return requestService.createRequest(userId, itemRequestDto);

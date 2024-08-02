@@ -11,6 +11,8 @@ import ru.yandex.practicum.booking.dto.BookingDtoOut;
 import ru.yandex.practicum.exceptions.BookingException;
 import ru.yandex.practicum.exceptions.NotFoundException;
 import ru.yandex.practicum.item.dto.*;
+import ru.yandex.practicum.request.Request;
+import ru.yandex.practicum.request.RequestRepository;
 import ru.yandex.practicum.user.User;
 import ru.yandex.practicum.user.UserRepository;
 
@@ -32,12 +34,21 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        Item item = toItem(itemDto, user);
+        Request request = null;
+        if (itemDto.getRequestId() != null) {
+            Optional<Request> requestOptional = requestRepository.findById(itemDto.getRequestId());
+            if (requestOptional.isPresent()) {
+                request = requestOptional.get();
+            }
+        }
+
+        Item item = toItem(itemDto, user, request);
         return toItemDto(itemRepository.save(item));
     }
 

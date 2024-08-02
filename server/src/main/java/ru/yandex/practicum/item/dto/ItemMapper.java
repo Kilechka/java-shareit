@@ -1,6 +1,7 @@
 package ru.yandex.practicum.item.dto;
 
 import ru.yandex.practicum.item.Item;
+import ru.yandex.practicum.request.Request;
 import ru.yandex.practicum.user.User;
 
 public final class ItemMapper {
@@ -22,12 +23,15 @@ public final class ItemMapper {
         return itemDto;
     }
 
-    public static Item toItem(ItemDto itemDto, User user) {
+    public static Item toItem(ItemDto itemDto, User user, Request request) {
         Item item = new Item();
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
         item.setOwner(user);
+        if (request != null) {
+            item.setRequest(request);
+        }
         return item;
     }
 

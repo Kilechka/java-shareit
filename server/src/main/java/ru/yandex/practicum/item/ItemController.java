@@ -1,15 +1,12 @@
 package ru.yandex.practicum.item;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.item.dto.CommentInDto;
 import ru.yandex.practicum.item.dto.CommentOutDto;
 import ru.yandex.practicum.item.dto.ItemDto;
 import ru.yandex.practicum.item.dto.ItemUpdateDto;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 @RestController
@@ -17,16 +14,15 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemServiceImpl itemService;
+    private final ItemService itemService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestBody @Valid ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@Valid @RequestBody ItemUpdateDto itemDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto updateItem(@RequestBody ItemUpdateDto itemDto, @PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
@@ -42,16 +38,13 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemDto> findItemForBooking(@RequestParam("text") String text) {
-        if (text == null || text.isEmpty()) {
-            return new ArrayList<>();
-        }
         return itemService.findItemForBooking(text);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentOutDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
                                     @PathVariable Long itemId,
-                                    @RequestBody @Valid CommentInDto comment) {
+                                    @RequestBody CommentInDto comment) {
         return itemService.addComment(userId, itemId, comment);
     }
 }

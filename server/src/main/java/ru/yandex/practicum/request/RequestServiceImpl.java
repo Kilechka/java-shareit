@@ -67,6 +67,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public Collection<RequestDto> getRequests(Long userId, int from, int size) {
+        log.info("Получаем запросы");
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Pageable pageable = PageRequest.of(from / size, size);
 
@@ -79,7 +80,8 @@ public class RequestServiceImpl implements RequestService {
         Request request = requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Запрос не найден"));
 
         List<ItemRequestDto> items = itemRepository.findByRequestId(request.getId()).stream()
-                .map(ItemMapper::toItemRequest).toList();
+                .map(ItemMapper::toItemRequest)
+                .collect(Collectors.toList());
 
         return toRequestOut(request).setItemsInfo(items);
     }

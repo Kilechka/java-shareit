@@ -3,6 +3,8 @@ package ru.yandex.practicum.request.dto;
 import ru.yandex.practicum.request.Request;
 import ru.yandex.practicum.user.User;
 
+import java.util.ArrayList;
+
 public class RequestMapper {
 
     private RequestMapper() {
@@ -19,10 +21,8 @@ public class RequestMapper {
 
     public static Request toRequest(RequestDto itemRequestDto, User user) {
         return Request.builder()
-                .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
                 .requestor(user)
-                .created(itemRequestDto.getCreated())
                 .build();
     }
 
@@ -31,6 +31,7 @@ public class RequestMapper {
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .requestor(itemRequest.getRequestor())
+                .items(new ArrayList<>())
                 .created(itemRequest.getCreated())
                 .build();
     }

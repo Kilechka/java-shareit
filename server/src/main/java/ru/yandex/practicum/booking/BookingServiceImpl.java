@@ -11,6 +11,7 @@ import ru.yandex.practicum.booking.dto.BookingDtoIn;
 import ru.yandex.practicum.booking.dto.BookingMapper;
 import ru.yandex.practicum.exceptions.BookingException;
 import ru.yandex.practicum.exceptions.NotFoundException;
+import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.item.Item;
 import ru.yandex.practicum.item.ItemRepository;
 import ru.yandex.practicum.user.User;
@@ -69,27 +70,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<BookingDto> getBookingsOfUser(String state, Long userId) {
+    public Collection<BookingDto> getBookingsOfUser(Long userId, String state, int from, int size) {
         log.info("Получаем бронирования для пользователя с ID {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        Pageable pageable = PageRequest.of(from / size, size);
 
         return switch (state) {
-            case "ALL" -> bookingRepository.findAllBookingsByUser(userId).stream()
+            case "ALL" -> bookingRepository.findAllBookingsByUser(userId, pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-            case "WAITING" -> bookingRepository.findBookingsByUserAndStatus(userId, Status.WAITING).stream()
+            case "WAITING" -> bookingRepository.findBookingsByUserAndStatus(userId, Status.WAITING, pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-            case "REJECTED" -> bookingRepository.findBookingsByUserAndStatus(userId, Status.REJECTED).stream()
+            case "REJECTED" -> bookingRepository.findBookingsByUserAndStatus(userId, Status.REJECTED, pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-            case "CURRENT" -> bookingRepository.findCurrentBookingsByUser(userId, LocalDateTime.now()).stream()
+            case "CURRENT" -> bookingRepository.findCurrentBookingsByUser(userId, LocalDateTime.now(), pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-            case "PAST" -> bookingRepository.findPastBookingsByUser(userId, LocalDateTime.now()).stream()
+            case "PAST" -> bookingRepository.findPastBookingsByUser(userId, LocalDateTime.now(), pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
-            case "FUTURE" -> bookingRepository.findFutureBookingsByUser(userId, LocalDateTime.now()).stream()
+            case "FUTURE" -> bookingRepository.findFutureBookingsByUser(userId, LocalDateTime.now(), pageable).stream()
                     .map(BookingMapper::toBookingDto)
                     .collect(Collectors.toList());
             default -> throw new BookingException("Unknown state: " + state);
@@ -133,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
     private Booking getBookingByIdForOwner(Long bookingId, Long userId) {
         log.info("Получаем бронирование с ID {} для владельца с ID {}", bookingId, userId);
         return bookingRepository.findByIdAndItemOwnerId(bookingId, userId)
-                .orElseThrow(() -> new NotFoundException("Бронирование не найдено, либо вам не принадлежит"));
+                .orElseThrow(() -> new ValidationException("Бронирование не найдено, либо вам не принадлежит"));
     }
 
     private void bookingValidation(User user, Item item, Booking booking) {
