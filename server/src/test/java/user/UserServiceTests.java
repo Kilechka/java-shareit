@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.ShareItServer;
+import ru.yandex.practicum.exceptions.NotFoundException;
+import ru.yandex.practicum.exceptions.ValidationException;
 import ru.yandex.practicum.user.UserServiceImpl;
 import ru.yandex.practicum.user.dto.UserDto;
 import ru.yandex.practicum.user.dto.UserUpdateDto;
@@ -83,5 +85,10 @@ public class UserServiceTests {
         UserDto retrievedUser = userService.getUser(createdUser.getId());
         Assertions.assertEquals(createdUser.getId(), retrievedUser.getId());
         Assertions.assertEquals(createdUser.getEmail(), retrievedUser.getEmail());
+    }
+
+    @Test
+    public void shouldNotGiveNotFoundUser() {
+        assertThrows(NotFoundException.class, () -> userService.getUser(30L));
     }
 }
