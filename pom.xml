@@ -15,8 +15,8 @@
         <lombok.version>1.18.30</lombok.version>
         <logbook.version>3.7.2</logbook.version>
         <spotbugs.version>4.8.5.0</spotbugs.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
