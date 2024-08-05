@@ -25,7 +25,6 @@ public class BookingDtoTests {
         itemRequestDto.setItemId(1L);
         itemRequestDto.setEnd(LocalDateTime.of(2025, 10, 1, 12, 0, 0));
 
-
         Set<ConstraintViolation<BookItemRequestDto>> violations = validator.validate(itemRequestDto);
         List<ConstraintViolation<BookItemRequestDto>> violationList = new ArrayList<>(violations);
 
@@ -39,7 +38,6 @@ public class BookingDtoTests {
         BookItemRequestDto itemRequestDto = new BookItemRequestDto();
         itemRequestDto.setItemId(1L);
         itemRequestDto.setStart(LocalDateTime.of(2025, 10, 1, 12, 0, 0));
-
 
         Set<ConstraintViolation<BookItemRequestDto>> violations = validator.validate(itemRequestDto);
         List<ConstraintViolation<BookItemRequestDto>> violationList = new ArrayList<>(violations);
